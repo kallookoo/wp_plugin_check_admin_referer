@@ -1,13 +1,13 @@
 {
-    "name": "23r9i0/wp_plugin_check_admin_referer",
+    "name": "kallookoo/wp_plugin_check_admin_referer",
     "description": "Checks if using the plugin on register_activation_hook or register_deactivation_hook",
     "type": "library",
-    "homepage": "https://github.com/23r9i0/wp_plugin_check_admin_referer",
+    "homepage": "https://github.com/kallookoo/wp_plugin_check_admin_referer",
     "license": "GPL-2.0+",
     "authors": [
         {
-            "name": "Sergio P.A. (23r9i0)",
-            "email": "info@dsergio.com"
+            "name": "Sergio (kallookoo)",
+            "email": "sergio@dsergio.com"
         }
     ],
     "autoload": {
