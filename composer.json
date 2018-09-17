@@ -11,6 +11,6 @@
         }
     ],
     "autoload": {
-        "files": ["src/wp_plugin_check_admin_referer.php"]
+        "files": ["src/wp-plugin-check-admin-referer.php"]
     }
 }

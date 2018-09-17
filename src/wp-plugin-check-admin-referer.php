@@ -1,35 +1,39 @@
 <?php
 /**
- * Checks if using the plugin on register_activation_hook or register_deactivation_hook
- * Use check_admin_referer to avoid security exploits
- *
+ * Helper function for WordPress
  *
  * @author Sergio (kallookoo) <sergio@dsergio.com>
  * @license https://www.gnu.org/licenses/gpl-2.0.html GPL2 or later
- * @version 1.0
- *
- * @param  string  $file  The filename of the plugin including the path.
- *
- * @return bool|int       return check_admin_referer output on single plugin action or boolean.
+ * @version 1.1.0
+ * @package dsergio\com\WordPress\Plugin\Helpers
  */
+
 if ( ! function_exists( 'wp_plugin_check_admin_referer' ) ) {
+	/**
+	 * Checks if using the plugin on register_activation_hook or register_deactivation_hook
+	 * Use check_admin_referer to avoid security exploits
+	 *
+	 * @param  string $file Plugin filename.
+	 *
+	 * @return bool
+	 */
 	function wp_plugin_check_admin_referer( $file ) {
-		if ( current_user_can( 'activate_plugins' ) ) {
+		if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
 			global $action;
 
 			$current_action = (string) $action;
 
 			if ( 'activate' === $current_action || 'deactivate' === $current_action ) {
-				$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+				$plugin = ( ! empty( $_REQUEST['plugin'] ) ) ? wp_unslash( $_REQUEST['plugin'] ) : ''; // WPCS: CSRF ok, sanitization ok.
 				return check_admin_referer( "{$current_action}-plugin_{$plugin}" );
 
 			} elseif ( 'activate-selected' === $current_action || 'deactivate-selected' === $current_action ) {
 				check_admin_referer( 'bulk-plugins' );
 
 				$plugin  = plugin_basename( trim( $file ) );
-				$plugins = isset( $_POST['checked'] ) ? (array) $_POST['checked'] : array();
+				$plugins = ( ! empty( $_POST['checked'] ) ) ? (array) $_POST['checked'] : array(); // WPCS: sanitization ok.
 
-				return in_array( $plugin, $plugins );
+				return in_array( $plugin, $plugins, true );
 			}
 		}
 
