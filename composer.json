@@ -1,6 +1,7 @@
 {
     "name": "kallookoo/wp_plugin_check_admin_referer",
-    "description": "Checks if using the plugin on register_activation_hook or register_deactivation_hook",
+    "description": "Checks if using the plugin on register_activation_hook, register_deactivation_hook and register_uninstall_hook",
+    "keywords": ["wordpress", "plugin", "validation", "security"],
     "type": "library",
     "homepage": "https://github.com/kallookoo/wp_plugin_check_admin_referer",
     "license": "GPL-2.0+",
