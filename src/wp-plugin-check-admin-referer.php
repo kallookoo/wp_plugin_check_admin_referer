@@ -22,6 +22,7 @@ if ( ! function_exists( 'wp_plugin_check_admin_referer' ) ) {
 		if ( is_admin() ) {
 			global $action;
 
+			$plugin  = plugin_basename( trim( $file ) );
 			$actions = array(
 				'single'   => array( 'activate', 'deactivate' ),
 				'multiple' => array( 'activate-selected', 'deactivate-selected', 'delete-selected' ),
@@ -31,17 +32,17 @@ if ( ! function_exists( 'wp_plugin_check_admin_referer' ) ) {
 				$cap = ( 'delete-selected' === $action ) ? 'delete_plugins' : 'activate_plugins';
 				if ( current_user_can( $cap ) ) {
 					if ( in_array( $action, $actions['single'], true ) ) {
-						$plugin = ( ! empty( $_REQUEST['plugin'] ) ) ? (string) $_REQUEST['plugin'] : ''; // WPCS: CSRF ok, sanitization ok.
-						return check_admin_referer( "{$action}-plugin_{$plugin}" );
+						$_plugin = ( ! empty( $_REQUEST['plugin'] ) ) ? (string) $_REQUEST['plugin'] : ''; // WPCS: CSRF ok, sanitization ok.
 
+						if ( $plugin === $_plugin ) {
+							return check_admin_referer( "{$action}-plugin_{$_plugin}" );
+						}
 					} elseif ( in_array( $action, $actions['multiple'], true ) ) {
 						if ( false !== check_admin_referer( 'bulk-plugins' ) ) {
-							$plugin = plugin_basename( trim( $file ) );
-
 							/**
 							 * Get correct global
 							 *
-							 * If delete-selected action use $_REQUEST otherwise, POST is used
+							 * If action is delete-selected use $_REQUEST otherwise, POST is used
 							 *
 							 * Note from /wp-admin/plugins.php for delete-selected action
 							 * $_POST = from the plugin form;
@@ -61,6 +62,10 @@ if ( ! function_exists( 'wp_plugin_check_admin_referer' ) ) {
 							return in_array( $plugin, $plugins, true );
 						}
 					}
+				}
+			} elseif ( has_action( "uninstall_{$plugin}" ) ) { /** Ajax uninstall plugin */
+				if ( isset( $_POST['plugin'] ) && $plugin === $_POST['plugin'] ) {
+					return check_ajax_referer( 'updates' );
 				}
 			}
 		}
